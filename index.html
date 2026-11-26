@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EarnEase - Earn Money</title>
+
+<!-- Monetag SDK -->
+<script src="https://libtl.com/sdk.js"
+ data-zone="12341336"
+ data-sdk="show_12341336"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+ font-family:Arial,sans-serif;
+ background:#f3f5fb;color:#182033;
+ padding-bottom:85px;
+}
+header{
+ background:linear-gradient(135deg,#5146e5,#8067ff);
+ color:white;padding:25px 20px 35px;
+ border-radius:0 0 25px 25px;
+}
+.top{display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:23px;font-weight:bold}
+.avatar{
+ background:#ffffff30;padding:10px 13px;
+ border-radius:50%;font-size:20px
+}
+.welcome{margin-top:24px;font-size:14px;opacity:.9}
+.balance-card{
+ background:white;color:#17213b;
+ margin:18px 15px;padding:22px;
+ border-radius:18px;
+ box-shadow:0 5px 20px #17213b12;
+}
+.balance-title{color:#777;font-size:13px}
+.balance{font-size:32px;font-weight:bold;margin:10px 0}
+.balance small{font-size:15px}
+.btn{
+ border:0;padding:13px 18px;border-radius:10px;
+ background:#5146e5;color:white;
+ font-weight:bold;cursor:pointer
+}
+.btn-light{background:#eeeaff;color:#5146e5}
+.container{padding:0 15px}
+.section-title{font-size:18px;font-weight:bold;margin:22px 0 13px}
+.grid{
+ display:grid;grid-template-columns:1fr 1fr;gap:12px
+}
+.card{
+ background:white;border-radius:15px;padding:17px;
+ box-shadow:0 3px 12px #00000008;
+}
+.icon{font-size:27px;margin-bottom:12px}
+.card h3{font-size:15px;margin-bottom:6px}
+.card p{font-size:12px;color:#777}
+.task{
+ display:flex;align-items:center;justify-content:space-between;
+ gap:10px;margin-bottom:12px
+}
+.task .btn{padding:10px 13px;font-size:12px}
+.panel{
+ background:white;border-radius:16px;padding:18px;
+ margin-bottom:14px;
+}
+input,select{
+ width:100%;padding:14px;border:1px solid #e1e3ed;
+ border-radius:10px;margin:8px 0 15px;
+ outline:none;font-size:14px;background:white
+}
+label{font-size:13px;font-weight:bold}
+.page{display:none}
+.page.active{display:block}
+.nav{
+ position:fixed;bottom:0;left:0;width:100%;
+ background:white;display:flex;justify-content:space-around;
+ padding:12px 5px calc(12px + env(safe-area-inset-bottom));
+ box-shadow:0 -3px 15px #00000010;
+ z-index:10
+}
+.nav button{
+ background:none;border:0;color:#888;
+ font-size:11px;display:flex;flex-direction:column;
+ align-items:center;gap:5px;cursor:pointer
+}
+.nav button span{font-size:21px}
+.nav button.active{color:#5146e5;font-weight:bold}
+.history{
+ padding:13px 0;border-bottom:1px solid #eee;
+ display:flex;justify-content:space-between;gap:8px;
+ font-size:13px
+}
+.status{font-size:12px;color:#777;margin-top:8px}
+.toast{
+ position:fixed;bottom:90px;left:50%;
+ transform:translateX(-50%);
+ background:#20243a;color:white;padding:13px 18px;
+ border-radius:10px;display:none;z-index:20;
+ width:max-content;max-width:90%;font-size:13px
+}
+.profile{text-align:center;padding:25px}
+.profile-icon{
+ width:75px;height:75px;background:#eeeaff;
+ color:#5146e5;border-radius:50%;display:grid;
+ place-items:center;font-size:35px;margin:auto auto 15px
+}
+.footer{text-align:center;color:#999;font-size:11px;padding:25px}
+</style>
+</head>
+
+<body>
+
+<header>
+ <div class="top">
+  <div class="logo">⚡ EarnEase</div>
+  <div class="avatar">👤</div>
+ </div>
+ <div class="welcome">স্বাগতম!</div>
+ <h2 style="margin-top:7px">আজই আয় শুরু করুন 🚀</h2>
+</header>
+
+<!-- HOME -->
+<div id="home" class="page active">
+
+ <div class="balance-card">
+  <div class="balance-title">💰 আপনার মোট ব্যালেন্স</div>
+  <div class="balance">৳<span id="walletBalance">0.00</span></div>
+  <button class="btn" onclick="showPage('wallet')">Withdraw করুন →</button>
+  <button class="btn btn-light" onclick="showPage('wallet')">Wallet</button>
+ </div>
+
+ <div class="container">
+  <div class="section-title">📊 আপনার ড্যাশবোর্ড</div>
+
+  <div class="grid">
+   <div class="card">
+    <div class="icon">💰</div>
+    <h3>৳<span id="homeBalance">0.00</span></h3>
+    <p>বর্তমান ব্যালেন্স</p>
+   </div>
+   <div class="card">
+    <div class="icon">📺</div>
+    <h3 id="taskCount">0</h3>
+    <p>সম্পন্ন Ad Request</p>
+   </div>
+  </div>
+
+  <div class="section-title">🎯 Earning Tasks</div>
+
+  <div class="panel task">
+   <div>
+    <div class="icon">📺</div>
+    <h3>Watch Advertisement</h3>
+    <p>Reward: ৳0.15 (যাচাই সাপেক্ষে)</p>
+   </div>
+   <button class="btn" onclick="handleAd()">Watch</button>
+  </div>
+
+  <div class="panel task">
+   <div>
+    <div class="icon">🎁</div>
+    <h3>Daily Bonus</h3>
+    <p>Daily reward campaign</p>
+   </div>
+   <button class="btn btn-light" onclick="toast('Daily Bonus এখনো চালু হয়নি')">Claim</button>
+  </div>
+
+  <div class="panel">
+   <h3>📢 Auto Advertisement</h3>
+   <p class="status">Monetag In-App Ads</p>
+   <br>
+   <button class="btn" onclick="startAds()">Start Ads</button>
+  </div>
+
+  <p class="status" id="status">আপনার কাজ শুরু করুন।</p>
+ </div>
+</div>
+
+<!-- WALLET -->
+<div id="wallet" class="page">
+ <div class="container">
+  <div class="section-title">💰 My Wallet</div>
+
+  <div class="balance-card" style="margin:0">
+   <div class="balance-title">Available Balance</div>
+   <div class="balance">৳<span id="walletBalance2">0.00</span></div>
+  </div>
+
+  <div class="section-title">Withdraw Request</div>
+
+  <div class="panel">
+   <label>Withdraw Amount (৳)</label>
+   <input type="number" id="withdrawAmount"
+    placeholder="Enter amount" min="50">
+
+   <label>Payment Method</label>
+   <select id="method">
+    <option value="">Select Method</option>
+    <option value="bKash">bKash</option>
+    <option value="Nagad">Nagad</option>
+   </select>
+
+   <label>Account Number</label>
+   <input type="tel" id="number"
+    placeholder="01XXXXXXXXX" maxlength="11">
+
+   <button class="btn" style="width:100%"
+    onclick="withdrawNow()">Submit Withdraw</button>
+
+   <p class="status">Minimum Withdraw: ৳50</p>
+  </div>
+
+  <div class="section-title">📜 Withdraw History</div>
+  <div class="panel" id="withdrawHistory">
+   কোনো History নেই
+  </div>
+ </div>
+</div>
+
+<!-- TASKS -->
+<div id="tasks" class="page">
+ <div class="container">
+  <div class="section-title">🎯 All Tasks</div>
+
+  <div class="panel">
+   <div class="icon">📺</div>
+   <h3>Advertisement Task</h3>
+   <p class="status">প্রতি সফল ও যাচাইকৃত Reward ৳0.15</p>
+   <br>
+   <button class="btn" onclick="handleAd()">Start Task</button>
+  </div>
+
+  <div class="panel">
+   <div class="icon">🎁</div>
+   <h3>Daily Check-in</h3>
+   <p class="status">Coming Soon</p>
+  </div>
+
+  <div class="panel">
+   <div class="icon">👥</div>
+   <h3>Referral Program</h3>
+   <p class="status">Coming Soon</p>
+  </div>
+ </div>
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="page">
+ <div class="container">
+  <div class="section-title">👤 My Profile</div>
+
+  <div class="panel profile">
+   <div class="profile-icon">👤</div>
+   <h2>EarnEase User</h2>
+   <p class="status">Welcome to EarnEase</p>
+  </div>
+
+  <div class="panel">
+   <h3>⚙️ Account Information</h3>
+   <br>
+   <p>User ID: <span id="userId"></span></p>
+   <br>
+   <p>Account Status: Demo</p>
+  </div>
+
+  <div class="panel">
+   <h3>📞 Support</h3>
+   <p class="status">Contact Admin for assistance.</p>
+  </div>
+
+  <div class="panel">
+   <button class="btn btn-light" onclick="showPage('home')">
+    Back to Home
+   </button>
+  </div>
+ </div>
+</div>
+
+<!-- BOTTOM NAVIGATION -->
+<div class="nav">
+ <button class="active" onclick="showPage('home',this)">
+  <span>🏠</span>Home
+ </button>
+ <button onclick="showPage('wallet',this)">
+  <span>💰</span>Wallet
+ </button>
+ <button onclick="showPage('tasks',this)">
+  <span>🎯</span>Tasks
+ </button>
+ <button onclick="showPage('profile',this)">
+  <span>👤</span>Profile
+ </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// =================================
+// EARN EASE JAVASCRIPT
+// =================================
+
+const REWARD = 0.15;
+const MIN_WITHDRAW = 50;
+
+let balance = Number(localStorage.getItem("balance")) || 0;
+let taskCount = Number(localStorage.getItem("taskCount")) || 0;
+
+function toast(message){
+ const el = document.getElementById("toast");
+ el.innerText = message;
+ el.style.display = "block";
+ clearTimeout(window.toastTimer);
+ window.toastTimer = setTimeout(()=>{
+  el.style.display = "none";
+ },3000);
+}
+
+// Navigation
+function showPage(page, button){
+ document.querySelectorAll(".page").forEach(p=>{
+  p.classList.remove("active");
+ });
+
+ document.getElementById(page).classList.add("active");
+
+ document.querySelectorAll(".nav button").forEach(b=>{
+  b.classList.remove("active");
+ });
+
+ if(button) button.classList.add("active");
+
+ const index = {
+  home:0,wallet:1,tasks:2,profile:3
+ }[page];
+
+ document.querySelectorAll(".nav button")[index]
+  .classList.add("active");
+
+ if(page==="wallet") showWithdrawHistory();
+}
+
+// Balance
+function updateBalanceDisplay(){
+ document.getElementById("walletBalance").innerText =
+  balance.toFixed(2);
+
+ document.getElementById("walletBalance2").innerText =
+  balance.toFixed(2);
+
+ document.getElementById("homeBalance").innerText =
+  balance.toFixed(2);
+
+ document.getElementById("taskCount").innerText = taskCount;
+
+ localStorage.setItem("balance",balance.toFixed(2));
+ localStorage.setItem("taskCount",taskCount);
+}
+
+// Monetag Reward Ad
+async function handleAd(){
+
+ const status = document.getElementById("status");
+
+ if(typeof show_12341336 !== "function"){
+  toast("Ad SDK লোড হয়নি। আবার চেষ্টা করুন।");
+  return;
+ }
+
+ status.innerText = "Advertisement Loading...";
+
+ try{
+  await show_12341336("");
+
+  taskCount++;
+  localStorage.setItem("taskCount",taskCount);
+
+  status.innerText =
+   "Ad request complete. Reward verification pending.";
+
+  updateBalanceDisplay();
+
+  toast("Ad request সম্পন্ন। Reward যাচাই বাকি।");
+
+  // Important:
+  // A resolved SDK call is not proof of a completed
+  // rewarded ad. Credit only after trusted server
+  // verification of the ad completion.
+
+ }catch(error){
+  console.error(error);
+  status.innerText = "Advertisement failed";
+  toast("Ad লোড করতে ব্যর্থ হয়েছে।");
+ }
+}
+
+// Auto Ads
+async function startAds(){
+
+ if(typeof show_12341336 !== "function"){
+  toast("SDK লোড হয়নি");
+  return;
+ }
+
+ try{
+  await show_12341336({
+   type:"inApp",
+   inAppSettings:{
+    frequency:2,
+    interval:30
+   }
+  });
+
+  toast("Ad request পাঠানো হয়েছে");
+
+ }catch(error){
+  console.error(error);
+  toast("Auto Ads চালু করা যায়নি");
+ }
+}
+
+// Withdraw
+function withdrawNow(){
+
+ const amount = Number(
+  document.getElementById("withdrawAmount").value
+ );
+
+ const method = document.getElementById("method").value;
+
+ const number = document.getElementById("number").value.trim();
+
+ if(!Number.isFinite(amount) || amount < MIN_WITHDRAW){
+  toast("Minimum Withdraw ৳50");
+  return;
+ }
+
+ if(amount > balance){
+  toast("আপনার Balance কম");
+  return;
+ }
+
+ if(!/^01[3-9]\d{8}$/.test(number)){
+  toast("সঠিক ১১ ডিজিটের নম্বর দিন");
+  return;
+ }
+
+ if(!method){
+  toast("Payment Method নির্বাচন করুন");
+  return;
+ }
+
+ let history = JSON.parse(
+  localStorage.getItem("withdrawHistory") || "[]"
+ );
+
+ const request = {
+  id:"WD-"+Date.now(),
+  amount:amount,
+  method:method,
+  number:number,
+  status:"Pending",
+  date:new Date().toLocaleString("bn-BD")
+ };
+
+ history.unshift(request);
+
+ localStorage.setItem(
+  "withdrawHistory",
+  JSON.stringify(history)
+ );
+
+ balance -= amount;
+
+ updateBalanceDisplay();
+ showWithdrawHistory();
+
+ document.getElementById("withdrawAmount").value="";
+ document.getElementById("number").value="";
+
+ toast("Demo Withdraw Request তৈরি হয়েছে");
+}
+
+// History
+function showWithdrawHistory(){
+
+ const history = JSON.parse(
+  localStorage.getItem("withdrawHistory") || "[]"
+ );
+
+ const container = document.getElementById("withdrawHistory");
+
+ if(!history.length){
+  container.innerHTML = "কোনো Withdraw History নেই";
+  return;
+ }
+
+ container.innerHTML = history.map(item=>`
+  <div class="history">
+   <div>
+    <b>৳${Number(item.amount).toFixed(2)}</b>
+    <p>${escapeHTML(item.method)} · ${escapeHTML(item.number)}</p>
+    <small>${escapeHTML(item.date)}</small>
+   </div>
+   <b style="color:#e39a21">${escapeHTML(item.status)}</b>
+  </div>
+ `).join("");
+}
+
+function escapeHTML(value){
+ return String(value).replace(/[&<>"']/g,c=>({
+  "&":"&amp;",
+  "<":"&lt;",
+  ">":"&gt;",
+  '"':"&quot;",
+  "'":"&#39;"
+ })[c]);
+}
+
+// User ID
+if(!localStorage.getItem("userId")){
+ localStorage.setItem(
+  "userId","EE-"+Math.floor(100000+Math.random()*900000)
+ );
+}
+
+document.getElementById("userId").innerText =
+ localStorage.getItem("userId");
+
+// Start
+updateBalanceDisplay();
+showWithdrawHistory();
+
+</script>
+
+<div class="footer">
+ © 2026 EarnEase. All Rights Reserved.
+</div>
+
+</body>
+</html>
